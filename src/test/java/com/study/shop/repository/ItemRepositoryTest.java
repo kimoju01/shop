@@ -1,5 +1,6 @@
 package com.study.shop.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.study.shop.constant.ItemSellStauts;
@@ -10,6 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.thymeleaf.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -61,6 +66,34 @@ class ItemRepositoryTest {
         }
     }
 
+    public void createItemList2() {
+        for (int i=1; i<5; i++) {
+            Item item = Item.builder()
+                    .itemCode("pt" + i)
+                    .itemName("테스트 상품" + i)
+                    .price(10000 + i)
+                    .itemDetail("상품 설명" + i)
+                    .stockNumber(100)
+                    .itemSellStauts(ItemSellStauts.SELL)
+                    .build();
+
+            Item savedItem = itemRepository.save(item);
+        }
+
+        for (int i=6; i<10; i++) {
+            Item item = Item.builder()
+                    .itemCode("pt" + i)
+                    .itemName("테스트 상품" + i)
+                    .price(10000 + i)
+                    .itemDetail("상품 설명" + i)
+                    .stockNumber(0)
+                    .itemSellStauts(ItemSellStauts.SOLD_OUT)
+                    .build();
+
+            Item savedItem = itemRepository.save(item);
+        }
+    }
+
     @Test
     @DisplayName("상품명 조회 테스트")
     public void findByItemNameTest() {
@@ -104,6 +137,39 @@ class ItemRepositoryTest {
 
         for(Item item : itemList) {
             log.info(item.toString());
+        }
+
+    }
+
+    @Test
+    @DisplayName("QuerydslPredicateExecutor 인터페이스 상품 조회 테스트")
+    public void queryDslTest2() {
+
+        this.createItemList2();
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        QItem qItem = QItem.item;
+
+        String itemDetail = "상품 설명";
+        int price = 10003;
+        String itemSellStatus = "SELL";
+
+        // BooleanBuilder로 쿼리 만들어줌
+        booleanBuilder.and(qItem.itemDetail.like("%" + "상품 설명" + "%"));
+        booleanBuilder.and(qItem.price.gt(price));
+
+        if (StringUtils.equals(itemSellStatus, ItemSellStauts.SELL)) {  // 판매 상태가 SELL이 때만 booleanBuilder에 조건 동적으로 추가
+            booleanBuilder.and(qItem.itemSellStauts.eq(ItemSellStauts.SELL));
+        }
+
+        Pageable pageable = PageRequest.of(0, 5);   // PageRequest.of(조회할 페이지 번호, 한 페이지당 조회할 데이터 개수)
+        // QuerydslPredicateExecutor 인터페이스의 findAll() 메서드로 조건에 맞는 데이터를 Page 객체로 받아옴
+        Page<Item> itemPagingResult = itemRepository.findAll(booleanBuilder, pageable);
+        log.info("total element : " + itemPagingResult.getTotalElements());
+
+        List<Item> resultItemList = itemPagingResult.getContent();
+        for (Item resultItem : resultItemList) {
+            log.info(resultItem.toString());
         }
 
     }
