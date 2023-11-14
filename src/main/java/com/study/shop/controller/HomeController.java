@@ -12,7 +12,7 @@ public class HomeController {
     @GetMapping(value = "/test1")
     public String thymeleafEx1(Model model) {
         model.addAttribute("data", "타임리프 테스트");
-        return "hello";
+        return "main";
     }
 
 }
