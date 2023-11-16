@@ -1,10 +1,11 @@
 package com.study.shop.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data   // @ToString, @EqualsAndHashCode, @Getter, @Setter, @RequiredArgsConstructor
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberFormDto {
     // 회원 가입 화면에서 넘어오는 정보
 
