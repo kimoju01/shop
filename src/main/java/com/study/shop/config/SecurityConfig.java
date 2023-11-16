@@ -14,9 +14,9 @@ public class SecurityConfig {
 
     // http 요청에 대한 보안 설정
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        return null;
+        return http.build();
     }
 
     @Bean
