@@ -37,18 +37,8 @@ public class Member extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)    // Enum은 기본적으로 순서가 저장되어서 순서가 바뀔 경우 문제 발생 => 순서말고 String으로 저장하게 설정
     private Role role;
 
-    public static Member createMember(MemberFormDto memberFormDto, PasswordEncoder passwordEncoder) {
-        // 정적 메서드? 인스턴스에 의존 X => 주어진 매개변수만으로 새로운 Member 객체 생성하므로 정적 메서드로 선언
-
-        return Member.builder()
-                .name(memberFormDto.getName())
-                .email(memberFormDto.getEmail())
-                .address(memberFormDto.getAddress())
-                .password(passwordEncoder.encode(memberFormDto.getPassword()))
-                .role(Role.USER)
-                .build();
-
+    public void setUserRole() {
+        this.role = Role.USER;
     }
-
 
 }
