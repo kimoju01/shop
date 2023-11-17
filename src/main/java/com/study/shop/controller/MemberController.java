@@ -1,15 +1,19 @@
 package com.study.shop.controller;
 
 import com.study.shop.dto.MemberFormDto;
+import com.study.shop.entity.Member;
 import com.study.shop.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/members")
@@ -31,12 +35,28 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public String memberRegisterPost(MemberFormDto memberFormDto) {
+    public String memberRegisterPost(@Valid MemberFormDto memberFormDto, BindingResult bindingResult, Model model) {
+        // @Vailid, BindingResult를 통해 DTO 검증
         log.info("Member Register POST..........");
 
+        // 검증 시 에러가 있다면 회원 가입 페이지로 이동
+        if (bindingResult.hasErrors()) {
+            log.info("has error..........");
+            return "member/memberRegister";         // 이렇게 하면 폼에 적은 내용 유지 (패스워드만 지워짐)
+//            return "redirect:/members/register";  // 이렇게 하면 폼에 있는 내용 싹 다 지운다
+        }
+
         log.info(memberFormDto);
-        Long savedId = memberService.register(memberFormDto);
-        log.info(savedId);
+        // 회원 가입 시 중복 회원 가입 예외 발생 시 에러 메시지를 뷰로 전달
+        try {
+            Long savedId = memberService.register(memberFormDto);
+            log.info(savedId);
+        } catch (IllegalStateException e) {
+            model.addAttribute("errorMessage", e.getMessage());
+            log.info("errorMessage = " + e.getMessage());
+
+            return "member/memberRegister";
+        }
 
         return "redirect:/";
     }
