@@ -2,10 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout1}">
+<!-- CSS -->
+<th:block layout:fragment="css">
 
-<th:block layout:fragment="css"></th:block>
-<th:block layout:fragment="script"></th:block>
-
+</th:block>
+<!-- Script -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            // 서버에서 받은 errorMessage 값을 자바스크립트 변수에 할당
+            const errorMessage = [[${errorMessage}]];
+            // 서버에서 받은 에러 메시지가 있다면 alert 창 띄움
+            if (errorMessage != null) {
+                alert(errorMessage);
+            }
+        });
+    </script>
+</th:block>
+<!-- Content -->
 <div layout:fragment="content">
 
     <div class="container">
@@ -14,19 +28,25 @@
                 <legend>회원가입</legend>
                 <div class="form-group">
                     <label th:for="name" class="form-label mt-4">이름</label>
+                    <!-- th:field="*{name}"은 모델 객체의 name 요소와 바인딩 -->
                     <input type="text" class="form-control" th:field="*{name}" placeholder="이름을 입력해주세요.">
+                    <!-- name 필드에 에러 있을 경우에만 p 요소 렌더링 -->
+                    <p class="text-info" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Incorrect data</p>
                 </div>
                 <div class="form-group">
                     <label th:for="email" class="form-label mt-4">이메일</label>
                     <input type="email" class="form-control" th:field="*{email}" placeholder="이메일을 입력해주세요.">
+                    <p class="text-info" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Incorrect data</p>
                 </div>
                 <div class="form-group">
                     <label th:for="password" class="form-label mt-4">비밀번호</label>
-                    <input type="email" class="form-control" th:field="*{password}" placeholder="비밀번호를 입력해주세요.">
+                    <input type="password" class="form-control" th:field="*{password}" placeholder="비밀번호를 입력해주세요.">
+                    <p class="text-info" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Incorrect data</p>
                 </div>
                 <div class="form-group">
                     <label th:for="address" class="form-label mt-4">주소</label>
                     <input type="text" class="form-control" th:field="*{address}" placeholder="주소를 입력해주세요.">
+                    <p class="text-info" th:if="${#fields.hasErrors('address')}" th:errors="*{address}">Incorrect data</p>
                 </div>
                 <div>
                     <button type="submit" class="btn btn-primary">Submit</button>
