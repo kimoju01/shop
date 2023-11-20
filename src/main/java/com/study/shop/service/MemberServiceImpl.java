@@ -40,11 +40,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void validateDuplicateMember(MemberFormDto memberFormDto) {
-        Member findMember = memberRepository.findByEmail(memberFormDto.getEmail());
+        memberRepository.findByEmail(memberFormDto.getEmail())
+                .ifPresent(member -> {  // 값이 존재하는 경우에 실행
+                    throw new IllegalStateException("이미 가입된 회원입니다.");
+                });
 
-        if (findMember != null) {
-            throw new IllegalStateException("이미 가입된 회원입니다.");
-        }
     }
 
 }
