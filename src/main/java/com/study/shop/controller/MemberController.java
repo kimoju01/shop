@@ -31,7 +31,7 @@ public class MemberController {
         model.addAttribute("memberFormDto", new MemberFormDto());
         // memberFormDto 객체를 할당한 이유?
         // 뷰에서 폼 데이터 바인딩할 때 해당 폼 데이터가 null이 아니라 초기화된 객체로 시작하면 처리하기 좋음 (유효성 검증)
-        return "member/memberRegister";
+        return "/member/memberRegister";
     }
 
     @PostMapping("/register")
@@ -42,7 +42,7 @@ public class MemberController {
         // 검증 시 에러가 있다면 회원 가입 페이지로 이동
         if (bindingResult.hasErrors()) {
             log.info("has error..........");
-            return "member/memberRegister";         // 이렇게 하면 폼에 적은 내용 유지 (패스워드만 지워짐)
+            return "/member/memberRegister";         // 이렇게 하면 폼에 적은 내용 유지 (패스워드만 지워짐)
 //            return "redirect:/members/register";  // 이렇게 하면 폼에 있는 내용 싹 다 지운다
         }
 
@@ -55,10 +55,21 @@ public class MemberController {
             model.addAttribute("errorMessage", e.getMessage());
             log.info("errorMessage = " + e.getMessage());
 
-            return "member/memberRegister";
+            return "/member/memberRegister";
         }
 
         return "redirect:/";
+    }
+
+    @GetMapping("/login")
+    public String memberLogin() {
+        return "/member/memberLogin";
+    }
+
+    @GetMapping("/login/error")
+    public String loginError(Model model) {
+        model.addAttribute("loginErrorMsg", "아이디 또는 비밀번호를 확인해 주세요.");
+        return "/member/memberLogin";
     }
 
 }

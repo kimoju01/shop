@@ -41,4 +41,6 @@ public class Member extends BaseTimeEntity {
         this.role = Role.USER;
     }
 
+    public void setAdminRole() { this.role = Role.ADMIN; }
+
 }

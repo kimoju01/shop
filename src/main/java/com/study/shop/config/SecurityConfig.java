@@ -32,6 +32,15 @@ public class SecurityConfig {
                 .logoutRequestMatcher(new AntPathRequestMatcher("/members/logout"))     // 로그아웃 URL
                 .logoutSuccessUrl("/");         // 로그아웃 성공 시 이동할 URL
 
+        http.authorizeRequests()
+                .mvcMatchers("/css/**", "/js/**", "/img/**").permitAll()    // 해당 경로 정적 리소스에 모든 사용자에게 허용
+                .mvcMatchers("/", "/members/**", "/item/**", "/images/**").permitAll()  // 해당 경로에 대해 모든 사용자에게 허용
+                .mvcMatchers("/admin/**").hasRole("ADMIN")  // ADMIN에게만 허용
+                .anyRequest().authenticated();  // 나머지 요청들은 인증된 사용자에게만 허용
+
+        http.exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint());    // 인증에 실패한 경우 처리할 AuthenticationEntryPoint
+
         return http.build();
     }
 
