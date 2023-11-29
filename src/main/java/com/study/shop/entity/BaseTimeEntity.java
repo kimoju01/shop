@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(value = { AuditingEntityListener.class } )
 @Getter
-public class BaseTimeEntity {
+public abstract class BaseTimeEntity {
+    // 등록일, 수정일만 포함
 
     @CreatedDate
     @Column(name = "regDate", updatable = false)
