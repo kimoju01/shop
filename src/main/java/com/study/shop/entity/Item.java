@@ -12,7 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Item extends BaseTimeEntity {
+public class Item extends BaseEntity {
 
     @Id
     @Column(name = "id")
