@@ -11,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class CartItem {
+public class CartItem extends BaseEntity {
 
     @Id
     @Column(name = "id")

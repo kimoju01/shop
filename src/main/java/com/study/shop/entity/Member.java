@@ -14,7 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Member extends BaseTimeEntity {
+public class Member extends BaseEntity {
 
     @Id
     @Column(name = "id")

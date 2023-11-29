@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Orders extends BaseTimeEntity {
+public class Orders extends BaseEntity {
 
     @Id
     @Column(name = "id")

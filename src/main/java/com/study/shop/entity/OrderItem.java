@@ -11,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class OrderItem extends BaseTimeEntity {
+public class OrderItem extends BaseEntity {
 
     @Id
     @Column(name = "id")
