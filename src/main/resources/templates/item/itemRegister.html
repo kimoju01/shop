@@ -48,13 +48,16 @@
                     <div class="form-group" th:each="num: ${#numbers.sequence(1,5)}">
                         <!-- 각 파일 업로드 폼 라벨에 번호 표시 -->
                         <label class="form-label mt-4 custom-file-label" th:text="'상품 이미지' + ${num}"></label>
+                        <!-- 상품 이미지 파일 선택해서 name="itemImgFile" 속성을 컨트롤러로 전달 -->
+                        <!-- 컨트롤러는 @RequestParam을 이용해 List<MultipartFile> itemImgFileList 파라미터로 받아서 ItemService의 saveItem 메서드로 전달 -->
                         <input type="file" class="form-control custom-file-input" name="itemImgFile">
                     </div>
                 </div>
                 <!-- 이미지 리스트가 비어있지 않은 경우(상품 수정) -->
                 <div th:if="${not #lists.isEmpty(itemFormDto.itemImgDtoList)}">
+                    <!-- itemFormDto.itemImgDtoList에 있는 각각의 itemImgDto에 대해 반복. status는 반복문의 상태(정보?)를 제공하는 객체 -->
                     <div class="form-group" th:each="itemImgDto, status: ${itemFormDto.itemImgDtoList}">
-                        <!-- 파일 원본 이름이 존재하면 라벨에 표시하고 없으면 번호 표시 -->
+                        <!-- 파일 원본 이름이 존재하면 라벨에 표시하고 없으면 번호 표시. status.index는 현재 반복의 인덱스(0부터 시작) -->
                         <label class="form-label mt-4 custom-file-label"
                                th:text="${not #strings.isEmpty(itemImgDto.originName)} ? ${itemImgDto.originName} : '상품이미지' + ${status.index+1}"></label>
                         <input type="hidden" th:value="${itemImgDto.id}" name="itemImgIds">
