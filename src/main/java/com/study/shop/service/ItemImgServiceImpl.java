@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.util.StringUtils;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @Transactional  // DB 작업 처리하다가 에러 하나라도 발생하면 로직 수행 전 상태로 모두 되돌려줌
 @RequiredArgsConstructor
@@ -41,4 +43,29 @@ public class ItemImgServiceImpl implements ItemImgService {
         itemImgRepository.save(itemImg);    // 업데이트된 이미지 엔티티를 DB에 저장
     }
 
+    @Override
+    public void updateItemImg(Long itemImgId, MultipartFile multipartFile) throws Exception {
+        // 상품 이미지를 수정한 경우 상품 이미지 업데이트
+        if (!multipartFile.isEmpty()) {
+            // 상품 이미지 id를 이용해 기존에 저장했던 상품 이미지 엔티티 조회
+            // savedItemImg를 조회했기 때문에 영속성 컨텍스트에서 관리함
+            ItemImg savedItemImg = itemImgRepository.findById(itemImgId).orElseThrow(EntityNotFoundException::new);
+
+            // 기존에 등록된 상품 이미지 파일이 있을 경우(파일 이름이 비어있지 않은 경우) 해당 파일 삭제
+            if (!StringUtils.isEmpty(savedItemImg.getName())) {
+                fileService.deleteFile(itemImgLocation + "/" + savedItemImg.getName());
+            }
+
+            String originImgName = multipartFile.getOriginalFilename();
+            // 업데이트한 상품 이미지 파일 업로드
+            String imgName = fileService.uploadFile(itemImgLocation, originImgName, multipartFile.getBytes());
+            String imgUrl = "/images/item/" + imgName;
+
+            // 변경된 상품 이미지 정보 세팅
+            // * itemImgRepository.save(savedItemImg) 호출 안 하는 이유?
+            // savedItemImg 엔티티는 위에서 조회했기 때문에 영속성 컨텍스트에 의해 관리되는 "영속 상태"임
+            // 영속 상태라면 데이터를 변경하는 것만으로 더티체킹(변경감지)이 동작 => 트랜잭션 끝날 때 자동으로 update 쿼리 실행돼서 DB에 반영 됨.
+            savedItemImg.updateItemImg(originImgName, imgName, imgUrl);
+        }
+    }
 }
