@@ -7,5 +7,6 @@ public interface ItemImgService {
     // 상품 이미지 업로드, 상품 이미지 정보 저장
 
     void saveItemImg(ItemImg itemImg, MultipartFile multipartFile) throws Exception;
+    void updateItemImg(Long itemImgId, MultipartFile multipartFile) throws Exception;
 
 }
